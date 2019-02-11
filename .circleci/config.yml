@@ -172,7 +172,7 @@ jobs:
             sleep 2
             echo ">>> Initial Disc Space is" && df -hlT
           no_output_timeout: 12m
-      - restore_cache
+      - restore_cache:
           <<: *repo_cache_key
       - run:
           name: Get Device Sources on place
@@ -221,7 +221,7 @@ jobs:
     <<: *repo_container_config
     steps:
       - checkout
-      - restore_cache
+      - restore_cache:
           <<: *pub_cache_key
       - run:
           name: Publish whatever is made
