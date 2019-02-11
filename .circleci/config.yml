@@ -14,11 +14,6 @@ references:
     environment: &base_environment
       JVM_OPTS: -Xmx3200m
 
-  repo_cache_key: &repo_cache_key
-    key: phantom-repo-Lineage-151-$(date +%Y%m%d)
-  pub_cache_key: &pub_cache_key
-    key: phantom-pub-{{ CIRCLE_WORKFLOW_ID }}
-
   repo_cache_paths: &repo_cache_paths
     paths:
       - "/home/${USER}/project/ZAndroid/"
