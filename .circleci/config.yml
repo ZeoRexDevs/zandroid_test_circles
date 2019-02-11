@@ -33,7 +33,8 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          <<: *repo_cache_key
+          key: phantom-repo-Lineage-151-$(date +%Y%m%d)
+          #<<: *repo_cache_key
       - run:
           name: Set Git Repo and Sync the Repository on Alpine
           command: |
@@ -73,7 +74,7 @@ jobs:
             fi
           no_output_timeout: 12m
       - save_cache:
-          <<: *repo_cache_key
+          key: phantom-repo-Lineage-151-$(date +%Y%m%d)
           <<: *repo_cache_paths
 
   builder:
@@ -173,7 +174,8 @@ jobs:
             echo ">>> Initial Disc Space is" && df -hlT
           no_output_timeout: 12m
       - restore_cache
-          <<: *repo_cache_key
+          key: phantom-repo-Lineage-151-$(date +%Y%m%d)
+          #<<: *repo_cache_key
       - run:
           name: Get Device Sources on place
           command: |
@@ -214,7 +216,7 @@ jobs:
             sleep 2
           no_output_timeout: 25m
       - save_cache:
-          <<: *pub_cache_key
+          key: phantom-pub-{{ CIRCLE_WORKFLOW_ID }}
           <<: *pub_cache_paths
 
   publish:
@@ -222,7 +224,7 @@ jobs:
     steps:
       - checkout
       - restore_cache
-          <<: *pub_cache_key
+          key: phantom-pub-{{ CIRCLE_WORKFLOW_ID }}
       - run:
           name: Publish whatever is made
           command: |
