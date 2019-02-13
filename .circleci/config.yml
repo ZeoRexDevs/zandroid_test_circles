@@ -23,44 +23,6 @@ references:
 
 jobs:
 
-  reposync:
-    <<: *container_config
-    steps:
-      - checkout
-      - restore_cache:
-          <<: *repo_cache_key
-      - run:
-          name: Set Git Repo and Sync the Repository
-          command: |
-            sudo apt-get update -qqy && sudo apt-get install -qy git curl
-            if [ ! -d "ZAndroid" ] ; then
-                whoami
-                echo ${PWD}
-                DIR=${PWD}
-                git config --global user.email $GitHubMail && git config --global user.name $GitHubName
-                git config --global color.ui true
-                mkdir ~/bin ; echo ~/bin || echo "bin folder pre-existing"
-                sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
-                sudo chmod a+x /usr/local/bin/repo
-                PATH=~/bin:/usr/local/bin:$PATH && echo $PATH
-                mkdir ZAndroid && cd ZAndroid
-                echo "Initialize the repo data fetching"
-                repo init -q -u https://github.com/LineageOS/android.git -b lineage-15.1
-                echo "Sync it up ..."
-                sudo repo sync -c -f -q --force-sync --no-clone-bundle --no-tags -j36
-                sleep 2
-                echo "The size of Repo is --" && du -sh .repo
-                sudo chown -fR circleci:circleci .repo
-                rm -rf .repo/
-                echo "Space taken by Files -- " && du -sh *
-            else
-                echo "ZAndroid Directory Found from Cache!" && sleep 2
-            fi
-          no_output_timeout: 12m
-      - save_cache:
-          <<: *repo_cache_key
-          <<: *repo_cache_paths
-
   builder:
     <<: *container_config
     steps:
@@ -171,14 +133,16 @@ jobs:
                 echo "Fatal Error! ZAndroid Directory Not Found!" && sleep 2 && exit 1
             fi
             sudo chown -fR circleci:circleci *
-            sudo git clone https://github.com/mohancm/android_kernel_lenovo_A7010a48 kernel/lenovo/k5fpr -b oreo
-            sudo git clone https://github.com/dlasdl/android_device_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
-            sudo git clone https://github.com/mohancm/android_vendor_lenovo_k5fpr vendor/lenovo/k5fpr -b oreo
+            sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr kernel/lenovo/k5fpr -b lineage-15.1
+            sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
+            sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr vendor/lenovo/k5fpr -b lineage-15.1
             sudo chown -fR circleci:circleci kernel
             sudo chown -fR circleci:circleci device
             sudo chown -fR circleci:circleci vendor
             echo "Apply Patches"
             cd device/lenovo/k5fpr/patches/
+            rm -f android_system_core.patch
+            wget -qO- https://transfer.sh/get/MNCdq/Update-android_system_core.patch > android_system_core.patch
             chmod +x *.sh
             bash install.sh
             cd ../../../..
@@ -212,7 +176,7 @@ jobs:
       - run:
           name: Publish whatever is made
           command: |
-            sudo apt-get update -qqy && sudo apt-get unstall wput -qy
+            sudo apt-get update -qqy && sudo apt-get install wput -qy
             echo ${USER}
             echo ${PWD}
             DIR=${PWD}
@@ -238,10 +202,7 @@ workflows:
 
   build:
     jobs:
-      - reposync
-      - builder:
-          requires:
-            - reposync
+      - builder
       - publish:
           requires:
             - builder
