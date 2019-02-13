@@ -37,15 +37,15 @@ jobs:
                 whoami
                 echo ${PWD}
                 DIR=${PWD}
-
+                
+                git config --global user.email $GitHubMail && git config --global user.name $GitHubName
+                git config --global color.ui true
+                
                 mkdir ~/bin ; echo ~/bin || echo "bin folder pre-existing"
                 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
                 sudo chmod a+x /usr/local/bin/repo
                 PATH=~/bin:/usr/local/bin:$PATH && echo $PATH
 
-                git config --global user.email $GitHubMail && git config --global user.name $GitHubName
-                git config --global color.ui true
-                
                 mkdir ZAndroid && cd ZAndroid
                 
                 echo "Initialize the repo data fetching"
@@ -54,7 +54,7 @@ jobs:
                 sudo repo sync -c -f -q --force-sync --no-clone-bundle --no-tags -j36
                 sleep 2
                 echo "The size of Repo is --" && du -sh .repo
-                sudo chown -fR .repo
+                sudo chown -fR circleci:circleci .repo
                 rm -rf .repo/
                 echo "Space taken by Files -- " && du -sh *
             else
