@@ -212,7 +212,7 @@ jobs:
       - run:
           name: Publish whatever is made
           command: |
-            sudo apt-get update -qqy && sudo apt-get unstall wput -qy
+            sudo apt-get update -qqy && sudo apt-get install wput -qy
             echo ${USER}
             echo ${PWD}
             DIR=${PWD}
