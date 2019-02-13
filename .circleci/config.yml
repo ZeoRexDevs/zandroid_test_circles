@@ -2,12 +2,7 @@ version: 2
 
 references:
 
-  repo_container_config: &repo_container_config
-    docker:
-      - image: fr3akyphantom/alpine-android:latest
-    working_directory: /home/circleci/project/
-
-  build_container_config: &build_container_config
+  container_config: &container_config
     docker:
       - image: circleci/android:api-27-ndk
     working_directory: /home/circleci/project/
@@ -29,23 +24,18 @@ references:
 jobs:
 
   reposync:
-    <<: *repo_container_config
+    <<: *container_config
     steps:
       - checkout
       - restore_cache:
           <<: *repo_cache_key
       - run:
-          name: Set Git Repo and Sync the Repository on Alpine
+          name: Set Git Repo and Sync the Repository
           command: |
-            cd /home/${USER}/project/
             if [ ! -d "ZAndroid" ] ; then
                 echo ${USER}
                 echo ${PWD}
                 DIR=${PWD}
-
-                #apk add --update --no-cache --purge -uU bash alpine-sdk make sudo
-
-                sed -ie 's/^root::/root:!:/' /etc/shadow" || echo "Passwordless Root Mode error!"
 
                 mkdir ~/bin ; echo ~/bin || echo "bin folder pre-existing"
                 sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://github.com/akhilnarang/repo/raw/master/repo
@@ -77,7 +67,7 @@ jobs:
           <<: *repo_cache_paths
 
   builder:
-    <<: *build_container_config
+    <<: *container_config
     steps:
       - checkout
       - run:
@@ -179,7 +169,6 @@ jobs:
       - run:
           name: Get Device Sources on place
           command: |
-            cd /home/${USER}/project/
             if [ -d "ZAndroid" ] ; then
                 echo "ZAndroid Folder Pre-exist through Cache."
             else
@@ -204,7 +193,6 @@ jobs:
       - run:
           name: Build the LineageOS
           command: |
-            cd /home/${USER}/project/ZAndroid
             export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx3200m"
             echo "Environment Setup"
             . build/envsetup.sh
@@ -220,7 +208,7 @@ jobs:
           <<: *pub_cache_paths
 
   publish:
-    <<: *repo_container_config
+    <<: *container_config
     steps:
       - checkout
       - restore_cache:
@@ -228,14 +216,10 @@ jobs:
       - run:
           name: Publish whatever is made
           command: |
+            sudo apt-get update -qqy && sudo apt-get unstall wput -qy
             echo ${USER}
             echo ${PWD}
             DIR=${PWD}
-            curl -O 'http://dl-cdn.alpinelinux.org/alpine/edge/testing/x86_64/wput-0.6.2-r3.apk'
-            curl -O 'http://dl-cdn.alpinelinux.org/alpine/edge/testing/x86_64/wput-doc-0.6.2-r3.apk'
-            apk add --allow-untrusted 'wput-0.6.2-r3.apk' 'wput-doc-0.6.2-r3.apk'
-            #apk add --update --no-cache --purge -uU bash alpine-sdk sudo wput
-            cd /home/${USER}/project/
             if [ -d "ZAndroid" ] ; then
                 echo "ZAndroid Folder Pre-exist through Cache."
                 if [ -d "ZAndroid/out/target/product/k5fpr/"] ; then 
