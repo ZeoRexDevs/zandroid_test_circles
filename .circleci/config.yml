@@ -133,8 +133,8 @@ jobs:
                 echo "Fatal Error! ZAndroid Directory Not Found!" && sleep 2 && exit 1
             fi
             sudo chown -fR circleci:circleci *
-            sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr kernel/lenovo/k5fpr -b lineage-15.1
-            sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
+            sudo git clone https://bitbucket.org/MaxxYamano/android_kernel_lenovo_k5fpr kernel/lenovo/k5fpr -b lineage-15.1
+            sudo git clone https://bitbucket.org/MaxxYamano/android_device_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
             sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr vendor/lenovo/k5fpr -b lineage-15.1
             sudo chown -fR circleci:circleci kernel
             sudo chown -fR circleci:circleci device
