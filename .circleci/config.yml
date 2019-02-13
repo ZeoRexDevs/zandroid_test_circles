@@ -132,11 +132,11 @@ jobs:
       - run:
           name: Setup the New Android SDK on a Linux System"
           command: |
-            ${ANDROID_HOME}="/opt/android/sdk"
+            ANDROID_HOME="/opt/android/sdk"
             echo "ANDROID_HOME ENV is --" && echo ${ANDROID_HOME}
             TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
             ZIP_NAME=$(printf '%s\n' "${TOOLS_URL##*/}")
-            rm -rf /opt/android/sdk/*
+            rm -rf /opt/android/sdk/* || echo "'/opt/android/sdk' folder is not empty"
             sudo mkdir -p ${ANDROID_HOME} || echo "'/opt/android/sdk' dir is already there"
             cd ${ANDROID_HOME}
             if axel -k -a -n 10 "${TOOLS_URL}"; then
