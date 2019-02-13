@@ -16,10 +16,10 @@ references:
 
   repo_cache_paths: &repo_cache_paths
     paths:
-      - "/home/${USER}/project/ZAndroid/"
+      - "/home/circleci/project/ZAndroid/"
   pub_cache_paths: &pub_cache_paths
     paths:
-      - "/home/${USER}/project/ZAndroid/out/target/product/k5fpr/"
+      - "/home/circleci/project/ZAndroid/out/target/product/k5fpr/"
 
 jobs:
 
@@ -32,6 +32,7 @@ jobs:
       - run:
           name: Set Git Repo and Sync the Repository
           command: |
+            sudo apt-get update -qqy && sudo apt-get install -qy git curl
             if [ ! -d "ZAndroid" ] ; then
                 whoami
                 echo ${PWD}
