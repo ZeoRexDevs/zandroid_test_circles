@@ -4,13 +4,13 @@ references:
 
   repo_container_config: &repo_container_config
     docker:
-      - image: woahbase/alpine-android:x86_64
-    working_directory: /home/${USER}/project/
+      - image: fr3akyphantom/alpine-android:latest
+    working_directory: /home/circleci/project/
 
   build_container_config: &build_container_config
     docker:
       - image: circleci/android:api-27-ndk
-    working_directory: /home/${USER}/project/
+    working_directory: /home/circleci/project/
     environment: &base_environment
       JVM_OPTS: -Xmx3200m
 
@@ -43,7 +43,7 @@ jobs:
                 echo ${PWD}
                 DIR=${PWD}
 
-                apk add --update --no-cache --purge -uU bash alpine-sdk make sudo
+                #apk add --update --no-cache --purge -uU bash alpine-sdk make sudo
 
                 sed -ie 's/^root::/root:!:/' /etc/shadow" || echo "Passwordless Root Mode error!"
 
@@ -146,11 +146,13 @@ jobs:
       - run:
           name: Setup the New Android SDK on a Linux System"
           command: |
+            ${ANDROID_HOME}="/opt/android/sdk"
+            echo "ANDROID_HOME ENV is --" && echo ${ANDROID_HOME}
             TOOLS_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip"
             ZIP_NAME=$(printf '%s\n' "${TOOLS_URL##*/}")
             rm -rf /opt/android/sdk/*
-            sudo mkdir -p /opt/android/sdk || echo "'/opt/android/sdk' dir is already there"
-            cd /opt/android/sdk
+            sudo mkdir -p ${ANDROID_HOME} || echo "'/opt/android/sdk' dir is already there"
+            cd ${ANDROID_HOME}
             if axel -k -a -n 10 "${TOOLS_URL}"; then
                 unzip -qqo "${ZIP_NAME}"
             else
@@ -161,7 +163,7 @@ jobs:
                 echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
             fi
             rm "${ZIP_NAME}"
-            echo "ANDROID_HOME ENV is --" && echo ${ANDROID_HOME}
+            PATH=$PATH:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
             source ~/.bashrc
             sleep 2
             echo "The PATH ENV is --" && echo $PATH && echo ""
@@ -185,8 +187,8 @@ jobs:
             fi
             sudo chown -fR circleci:circleci *
             sudo git clone https://github.com/mohancm/android_kernel_lenovo_A7010a48 kernel/lenovo/k5fpr -b oreo
-            sudo git clone https://github.com/SahilSonar/android_device_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
-            sudo git clone https://github.com/SahilSonar/android_vendor_lenovo_k5fpr vendor/lenovo/k5fpr -b lineage-15.1
+            sudo git clone https://github.com/dlasdl/android_device_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
+            sudo git clone https://github.com/mohancm/android_vendor_lenovo_k5fpr vendor/lenovo/k5fpr -b oreo
             sudo chown -fR circleci:circleci kernel
             sudo chown -fR circleci:circleci device
             sudo chown -fR circleci:circleci vendor
@@ -229,7 +231,10 @@ jobs:
             echo ${USER}
             echo ${PWD}
             DIR=${PWD}
-            apk add --update --no-cache --purge -uU bash alpine-sdk sudo wput
+            curl -O 'http://dl-cdn.alpinelinux.org/alpine/edge/testing/x86_64/wput-0.6.2-r3.apk'
+            curl -O 'http://dl-cdn.alpinelinux.org/alpine/edge/testing/x86_64/wput-doc-0.6.2-r3.apk'
+            apk add --allow-untrusted 'wput-0.6.2-r3.apk' 'wput-doc-0.6.2-r3.apk'
+            #apk add --update --no-cache --purge -uU bash alpine-sdk sudo wput
             cd /home/${USER}/project/
             if [ -d "ZAndroid" ] ; then
                 echo "ZAndroid Folder Pre-exist through Cache."
