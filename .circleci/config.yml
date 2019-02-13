@@ -33,7 +33,7 @@ jobs:
           name: Set Git Repo and Sync the Repository
           command: |
             if [ ! -d "ZAndroid" ] ; then
-                echo ${USER}
+                whoami
                 echo ${PWD}
                 DIR=${PWD}
 
@@ -44,11 +44,9 @@ jobs:
 
                 git config --global user.email $GitHubMail && git config --global user.name $GitHubName
                 git config --global color.ui true
-
-                cd /home/${USER}/project/
-
+                
                 mkdir ZAndroid && cd ZAndroid
-
+                
                 echo "Initialize the repo data fetching"
                 repo init -q -u https://github.com/LineageOS/android.git -b lineage-15.1
                 echo "Sync it up ..."
