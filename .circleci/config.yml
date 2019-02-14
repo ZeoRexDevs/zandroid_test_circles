@@ -197,7 +197,7 @@ jobs:
             else
                 echo "Fatal Error! ZAndroid Directory Not Found!" && sleep 2 && exit 1
             fi
-            cd out/target/product/k5fpr/
+            cd ZAndroid/out/target/product/k5fpr/
             echo "list all the files"
             ls -la */
             echo ""Start upload files
