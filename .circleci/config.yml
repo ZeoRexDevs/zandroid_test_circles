@@ -127,8 +127,10 @@ jobs:
       - run:
           name: Get Device Sources on place
           command: |
+            pwd
             cd /home/circleci/project/
-            sudo ls -la ZAndroid/
+            pwd
+            sudo ls -la ZAndroid/build/make/
             sudo chown -fR circleci:circleci ZAndroid/*
             if [ -d "ZAndroid/build/make" ] ; then
                 echo "ZAndroid build Folder Pre-exist through Cache."
@@ -150,7 +152,7 @@ jobs:
             chmod +x *.sh
             bash install.sh
             cd ../../../..
-            echo ">>> How much space taken by checked-out files?" && du -sh /home/circleci/project/Zandroid
+            echo ">>> How much space taken by checked-out files?" && du -sh *
             echo ">>> Primary Disc Space is now --- " && df -hlT
             ls -la .
           no_output_timeout: 8m
@@ -186,7 +188,7 @@ jobs:
             echo ${PWD}
             DIR=${PWD}
             cd /home/circleci/project/
-            ls -la .
+            ls -la ./*
             sudo chown -fR circleci:circleci .
             if [ -d "ZAndroid/out" ] ; then
                 echo "ZAndroid out Folder Pre-exist through Cache."
