@@ -127,10 +127,13 @@ jobs:
       - run:
           name: Get Device Sources on place
           command: |
-            if [ -d "ZAndroid" ] ; then
-                echo "ZAndroid Folder Pre-exist through Cache."
+            cd /home/circleci/project/
+            ls -la .
+            sudo chown -fR circleci:circleci .
+            if [ -d "ZAndroid/build/make" ] ; then
+                echo "ZAndroid build Folder Pre-exist through Cache."
             else
-                echo "Fatal Error! ZAndroid Directory Not Found!" && sleep 2 && exit 1
+                echo "Fatal Error! ZAndroid build Directory Not Found!" && sleep 2 && exit 1
             fi
             sudo chown -fR circleci:circleci *
             sudo git clone https://bitbucket.org/MaxxYamano/android_kernel_lenovo_k5fpr kernel/lenovo/k5fpr -b lineage-15.1
@@ -180,8 +183,11 @@ jobs:
             echo ${USER}
             echo ${PWD}
             DIR=${PWD}
-            if [ -d "ZAndroid" ] ; then
-                echo "ZAndroid Folder Pre-exist through Cache."
+            cd /home/circleci/project/
+            ls -la .
+            sudo chown -fR circleci:circleci .
+            if [ -d "ZAndroid/out" ] ; then
+                echo "ZAndroid out Folder Pre-exist through Cache."
                 if [ -d "ZAndroid/out/target/product/k5fpr/"] ; then 
                     echo "Product Output Found"
                 else 
