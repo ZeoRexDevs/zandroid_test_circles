@@ -127,10 +127,7 @@ jobs:
       - run:
           name: Get Device Sources on place
           command: |
-            pwd
             cd /home/circleci/project/
-            pwd
-            sudo ls -la ZAndroid/build/make/
             sudo chown -fR circleci:circleci ZAndroid/*
             if [ -d "ZAndroid/build/make" ] ; then
                 echo "ZAndroid build Folder Pre-exist through Cache."
@@ -138,7 +135,6 @@ jobs:
                 echo "Fatal Error! ZAndroid build Directory Not Found!" && sleep 2 && exit 1
             fi
             cd ZAndroid
-            sudo chown -fR circleci:circleci *
             sudo git clone https://bitbucket.org/MaxxYamano/android_kernel_lenovo_k5fpr kernel/lenovo/k5fpr -b lineage-15.1
             sudo git clone https://bitbucket.org/MaxxYamano/android_device_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
             sudo git clone https://bitbucket.org/MaxxYamano/android_vendor_lenovo_k5fpr vendor/lenovo/k5fpr -b lineage-15.1
@@ -147,8 +143,6 @@ jobs:
             sudo chown -fR circleci:circleci vendor
             echo "Apply Patches"
             cd device/lenovo/k5fpr/patches/
-            rm -f android_system_core.patch
-            wget -qO- https://transfer.sh/get/MNCdq/Update-android_system_core.patch > android_system_core.patch
             chmod +x *.sh
             bash install.sh
             cd ../../../..
@@ -170,7 +164,9 @@ jobs:
             sleep 5
             ls -la *
             echo "Brunching, Umm.. --- "
-            make -j2
+            make -j4 showcommands
+            mkdir out || echo "out folder exists"
+            make O=out -j2
             #brunch lineage_k5fpr-userdebug
             sleep 2
           no_output_timeout: 25m
