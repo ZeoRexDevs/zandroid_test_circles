@@ -6,9 +6,8 @@ references:
     docker:
       - image: circleci/android:api-27-ndk
     working_directory: /home/circleci/project/
-    resource_class: xlarge
-    #environment: &base_environment
-      #JVM_OPTS: -Xmx3200m
+    environment: &base_environment
+      JVM_OPTS: -Xmx6400m
 
   repo_cache_key: &repo_cache_key
     key: phantom-repo-Lineage-151-Feb13
@@ -26,7 +25,6 @@ jobs:
 
   builder:
     <<: *container_config
-    resource_class: xlarge
     steps:
       - checkout
       - restore_cache:
@@ -161,13 +159,15 @@ jobs:
       - run:
           name: Build the LineageOS
           command: |
-            export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx3200m"
+            export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx6400m"
+            sudo swapoff -a && sudo swapon -a
+            sleep 5
             cd /home/circleci/project/ZAndroid/
             echo "Environment Setup"
             . build/envsetup.sh
             echo "Lunching --- "
             lunch lineage_k5fpr-userdebug
-            sleep 2
+            sleep 5
             echo "Brunching, Umm.. --- "
             brunch lineage_k5fpr-userdebug
             sleep 2
