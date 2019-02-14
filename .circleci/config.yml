@@ -7,7 +7,7 @@ references:
       - image: circleci/android:api-27-ndk
     working_directory: /home/circleci/project/
     environment: &base_environment
-      JVM_OPTS: -Xmx6400m
+      JVM_OPTS: -Xmx3400m
 
   repo_cache_key: &repo_cache_key
     key: phantom-repo-Lineage-151-Feb13
@@ -159,7 +159,7 @@ jobs:
       - run:
           name: Build the LineageOS
           command: |
-            export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx6400m"
+            export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx3400m"
             sudo swapoff -a && sudo swapon -a
             sleep 5
             cd /home/circleci/project/ZAndroid/
@@ -168,8 +168,10 @@ jobs:
             echo "Lunching --- "
             lunch lineage_k5fpr-userdebug
             sleep 5
+            ls -la *
             echo "Brunching, Umm.. --- "
-            brunch lineage_k5fpr-userdebug
+            make -j2
+            #brunch lineage_k5fpr-userdebug
             sleep 2
           no_output_timeout: 25m
       - save_cache:
