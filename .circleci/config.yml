@@ -6,8 +6,9 @@ references:
     docker:
       - image: circleci/android:api-27-ndk
     working_directory: /home/circleci/project/
-    environment: &base_environment
-      JVM_OPTS: -Xmx3200m
+    resource_class: xlarge
+    #environment: &base_environment
+      #JVM_OPTS: -Xmx3200m
 
   repo_cache_key: &repo_cache_key
     key: phantom-repo-Lineage-151-Feb13
@@ -25,6 +26,7 @@ jobs:
 
   builder:
     <<: *container_config
+    resource_class: xlarge
     steps:
       - checkout
       - restore_cache:
