@@ -27,6 +27,8 @@ jobs:
     <<: *container_config
     steps:
       - checkout
+      - restore_cache:
+          <<: *repo_cache_key
       - run:
           name: Setup Some Apps required for the Build
           command: |
@@ -122,19 +124,18 @@ jobs:
             sleep 2
             echo ">>> Initial Disc Space is" && df -hlT
           no_output_timeout: 12m
-      - restore_cache:
-          <<: *repo_cache_key
       - run:
           name: Get Device Sources on place
           command: |
             cd /home/circleci/project/
-            ls -la .
-            sudo chown -fR circleci:circleci .
+            sudo ls -la Zandroid/
+            sudo chown -fR circleci:circleci ZAndroid/*
             if [ -d "ZAndroid/build/make" ] ; then
                 echo "ZAndroid build Folder Pre-exist through Cache."
             else
                 echo "Fatal Error! ZAndroid build Directory Not Found!" && sleep 2 && exit 1
             fi
+            cd ZAndroid
             sudo chown -fR circleci:circleci *
             sudo git clone https://bitbucket.org/MaxxYamano/android_kernel_lenovo_k5fpr kernel/lenovo/k5fpr -b lineage-15.1
             sudo git clone https://bitbucket.org/MaxxYamano/android_device_lenovo_k5fpr device/lenovo/k5fpr -b lineage-15.1
