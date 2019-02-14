@@ -128,7 +128,7 @@ jobs:
           name: Get Device Sources on place
           command: |
             cd /home/circleci/project/
-            sudo ls -la Zandroid/
+            sudo ls -la ZAndroid/
             sudo chown -fR circleci:circleci ZAndroid/*
             if [ -d "ZAndroid/build/make" ] ; then
                 echo "ZAndroid build Folder Pre-exist through Cache."
@@ -158,6 +158,7 @@ jobs:
           name: Build the LineageOS
           command: |
             export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx3200m"
+            cd /home/circleci/project/ZAndroid/
             echo "Environment Setup"
             . build/envsetup.sh
             echo "Lunching --- "
